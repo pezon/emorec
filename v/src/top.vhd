@@ -58,7 +58,7 @@ begin
       clock   =>  clock,
       reset   =>  reset,
       start   =>  cell_active(1),
-      u_buff  =>  u_buff,
+      u_buff  =>  u_buff("01"),
       l_buff  =>  l_buff,
       r_buff  =>  r_buff,
       d_buff  =>  d_buff,
