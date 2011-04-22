@@ -113,3 +113,5 @@ int calc_p (const uint32_t t, uint32_t * const p);
  */
 int test_match(uint8_t const *const image, const uint32_t h, const uint32_t w, uint8_t const *const eigenface, uint32_t * const p);
 
+int free_histogram(uint8_t *const histogram);
+
