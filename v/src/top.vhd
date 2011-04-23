@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 
 entity datapath is
   generic (
+    NUM_CELLS  :  integer  :=  3;
   );
   port (
     clock
@@ -16,12 +17,10 @@ architecture a for datapath is
   -- SRAM address and data bus
   signal address : std_logic_vector(ADDRBUS_LENGTH - 1 downto 0);
   signal data    : std_logic_vector(DATABUS_LENGTH - 1 downto 0);
-  -- horizontal buffer
-  -- vertical buffer
-  -- misc
-  col0
-  col1
-  col2
+  -- active cell (cell loading data)
+  signal cell_select  : std_logic_vector(1 downto 0);
+  signal cell_active  : std_logic_vector(NUM_CELLS downto 0);
+  -- vertical buffer -- carries from prev cell to next cell
   
 begin
 
@@ -39,77 +38,67 @@ begin
       address  => address,
       data     => data
     );
-      
-  CELL0 : entity work.cell 
+
+  -- cell select
+  CYCLER : entity work.cell_cycler
     port map (
       clock   =>  clock,
       reset   =>  reset,
-      load0   =>  load0(0),
-      load1   =>  load1(0),
-      row0    =>  row0(0),
-      row1    =>  row1(0),
-      row2    =>  row2(0),
-      u_buff  =>  u_buff(0),
-      l_buff  =>  l_buff(0),
-      data    =>  data(0),
-      r_buff  =>  r_buff(0),
+      start   =>  start,
+      cycle   =>  cell_select(2 downto 1)
+    );
+
+  cell_active(1) <= '1' when cell_select = "01" else '0';
+  cell_active(2) <= '1' when cell_select = "10" else '0';
+  cell_active(3) <= '1' when cell_select = "11" else '0';
+      
+  -- cells
+  CELL1 : entity work.cell 
+    port map (
+      clock   =>  clock,
+      reset   =>  reset,
+      start   =>  cell_active(1),
+      u_buff  =>  u_buff("01"),
+      l_buff  =>  l_buff,
+      r_buff  =>  r_buff,
       d_buff  =>  d_buff,
+      data    =>  data,
       col0    =>  col0(0),
       col1    =>  col1(0),
       col2    =>  col2(0)
     );
 
-  CELL1 : entity work.cell 
+  CELL2 : entity work.cell 
     port map (
       clock   =>  clock,
       reset   =>  reset,
-      load0   =>  load0,
-      load1   =>  load1,
-      row0    =>  row0,
-      row1    =>  row1,
-      row2    =>  row2,
+      start   =>  cell_active(2),
       u_buff  =>  u_buff,
       l_buff  =>  l_buff,
-      data    =>  data,
       r_buff  =>  r_buff,
       d_buff  =>  d_buff,
-      col0    =>  col0(1),
-      col1    =>  col1(1),
-      col2    =>  col2(1)
+      data    =>  data,
+      col0    =>  col0(0),
+      col1    =>  col1(0),
+      col2    =>  col2(0)
     );
 
-   CELL3 : entity work.cell 
+  CELL3 : entity work.cell 
     port map (
       clock   =>  clock,
       reset   =>  reset,
-      load0   =>  load0,
-      load1   =>  load1,
-      row0    =>  row0,
-      row1    =>  row1,
-      row2    =>  row2,
+      start   =>  cell_active(3),
       u_buff  =>  u_buff,
       l_buff  =>  l_buff,
-      data    =>  data,
       r_buff  =>  r_buff,
       d_buff  =>  d_buff,
-      col0    =>  col0(2),
-      col1    =>  col1(2),
-      col2    =>  col2(2)
+      data    =>  data,
+      col0    =>  col0(0),
+      col1    =>  col1(0),
+      col2    =>  col2(0)
     );
 
-  -- mux to direct output to histogram reg
-  feature(0) <= col0(0) when active = "00"
-    else col1(0) when active = "01"
-    else col2(0) when active = "10";
 
-  feature(1) <= col0(1) when active = "00"
-    else col1(1) when active = "01"
-    else col2(1) when active = "10";
-     
-  feature(2) <= col0(2) when active = "00"
-    else col1(2) when active = "01"
-    else col2(2) when active = "10";
-   
   HISTREG : entity work.histogram_register
     port map (
       clock   =>  clock,
