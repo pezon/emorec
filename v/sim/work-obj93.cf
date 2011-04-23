@@ -1,7 +1,0 @@
-v 3
-file "/home/peter/school/emorec/" "src/cell_tb.vhd" "20110403080054.000" "20110403044516.589":
-  entity cell_tb at 3( 20) + 0 on 159;
-  architecture tb of cell_tb at 10( 119) + 0 on 160;
-file "/home/peter/school/emorec/" "src/cell.vhd" "20110403084514.000" "20110403044516.494":
-  entity cell at 6( 235) + 0 on 157;
-  architecture a of cell at 31( 1424) + 0 on 158;
