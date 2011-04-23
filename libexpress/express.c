@@ -197,8 +197,15 @@ int test_match(uint8_t const *const image, const uint32_t h, const uint32_t w, u
 
   gen_histogram(image, h, w, &histogram);
   calc_stat(histogram, eigenface, HIST_LEN, &t);
-  free(histogram);
   calc_p(t, p);
+  free(histogram);
+}
+
+int free_histogram(uint8_t *const histogram)
+{
+  free(histogram);
+
+  return SUCCESS;
 }
 
 static int
