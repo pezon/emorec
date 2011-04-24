@@ -15,14 +15,12 @@ use work.emorec.all;
 
 entity cell_loader is
   generic (
-    CELL_HEIGHT   :  integer  := 5;
-    CELL_WIDTH    :  integer  := 4;
-    PIXEL_WIDTH   :  integer  := 8; 
     DOUBLE_WIDTH  :  integer  := 64
   );
   port (
     clock   :  in  std_logic  :=  '0';
     reset   :  in  std_logic  :=  '0'; 
+    flush   :  in  std_logic  :=  '0';
     load    :  in  std_logic  :=  '0';
     data    :  in  std_logic_vector(DOUBLE_WIDTH - 1 downto 0)     :=  (others => '0');
     buffin  :  in  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0)  :=  (others => '0');
@@ -36,7 +34,7 @@ architecture a of cell_loader is
   signal rows : rows_t;
 begin
 
-  process (clock, reset, load)
+  process (clock, reset)
   begin
     if reset = '1' then
       rows(0) <= (others => '0');
@@ -44,22 +42,28 @@ begin
       rows(2) <= (others => '0');
       rows(3) <= (others => '0');
       rows(4) <= (others => '0');
-    end if;
-    -- reset and load state can happen at the same time,
-    -- to clear data when cell loader moves to next row.
     -- on load, data is shifted two cells to the left.
-    if clock = '1' and clock'event and load = '1' then
+    elsif clock = '1' and clock'event and load = '1' then
+      if flush = '1' then 
+        -- flush out existing data from registers,
+        -- specifically when indexing a new row.
+        rows(0) <= (others => '0');
+        rows(1) <= (others => '0');
+        rows(2) <= (others => '0');
+        rows(3) <= (others => '0');
+        rows(4) <= (others => '0');
+      end if;
       -- data from buffer register
       rows(0) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
       rows(0) <= buffin(PIXEL_WIDTH * 2 - 1 downto 0);
       -- streaming data
-      rows(1) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
+      rows(1) <= std_logic_vector(shift_left(unsigned(rows(1)), PIXEL_WIDTH * 2));  
       rows(1)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 3);
-      rows(2) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
+      rows(2) <= std_logic_vector(shift_left(unsigned(rows(2)), PIXEL_WIDTH * 2));  
       rows(2)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 3 - 1 downto PIXEL_WIDTH * 2);
-      rows(3) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
+      rows(3) <= std_logic_vector(shift_left(unsigned(rows(3)), PIXEL_WIDTH * 2));  
       rows(3)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 2 - 1 downto PIXEL_WIDTH * 1);
-      rows(4) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
+      rows(4) <= std_logic_vector(shift_left(unsigned(rows(4)), PIXEL_WIDTH * 2));  
       rows(4)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 1 - 1 downto PIXEL_WIDTH * 0);
     end if;
   end process;
