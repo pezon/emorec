@@ -8,14 +8,14 @@ entity cell_buffer is
     clock  :  in  std_logic  := '0';
     reset  :  in  std_logic  := '0';
     load   :  in  std_logic  := '0';
-    addr   :  in  integer range 0 to ROW_WIDTH - 1;
+    addr   :  in  natural range 0 to ROW_WIDTH - 1;
     data   :  in  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0) := (others => '0');
     q      :  out std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0) := (others => '0') 
   );
 end cell_buffer;
 
 architecture a of cell_buffer is
-  type memory_t is array(integer range 0 to ROW_WIDTH - 1) of std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0);
+  type memory_t is array(natural range 0 to ROW_WIDTH - 1) of std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0);
   signal memory : memory_t;
 begin
 

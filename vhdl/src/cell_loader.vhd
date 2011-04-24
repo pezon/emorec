@@ -15,7 +15,7 @@ use work.emorec.all;
 
 entity cell_loader is
   generic (
-    DOUBLE_WIDTH  :  integer  := 64
+    DOUBLE_WIDTH  :  natural  := 64
   );
   port (
     clock   :  in  std_logic  :=  '0';
@@ -30,7 +30,7 @@ entity cell_loader is
 end cell_loader;
 
 architecture a of cell_loader is 
-  type rows_t is array(integer range 0 to CELL_HEIGHT - 1) of std_logic_vector(PIXEL_WIDTH * CELL_WIDTH - 1 downto 0);
+  type rows_t is array(natural range 0 to CELL_HEIGHT - 1) of std_logic_vector(PIXEL_WIDTH * CELL_WIDTH - 1 downto 0);
   signal rows : rows_t;
 begin
 

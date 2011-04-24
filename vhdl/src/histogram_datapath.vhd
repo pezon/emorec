@@ -18,7 +18,7 @@ architecture a of histogram_datapath is
   signal buffin   :  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0)  := (others => '0');
   signal buffout  :  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0)  := (others => '0');
   signal matrix   :  matrix_t;
-  signal position :  integer range 0 to ROW_WIDTH - 1 := 0; 
+  signal position :  natural range 0 to ROW_WIDTH - 1 := 0; 
 begin
 
   -- index position of cell on the image
