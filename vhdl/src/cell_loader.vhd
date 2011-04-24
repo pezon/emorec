@@ -55,16 +55,16 @@ begin
       end if;
       -- data from buffer register
       rows(0) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
-      rows(0) <= buffin(PIXEL_WIDTH * 2 - 1 downto 0);
+      rows(0)(PIXEL_WIDTH * 2 - 1 downto 0) <= buffin(PIXEL_WIDTH * 2 - 1 downto 0);
       -- streaming data
       rows(1) <= std_logic_vector(shift_left(unsigned(rows(1)), PIXEL_WIDTH * 2));  
-      rows(1)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 3);
+      rows(1)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 8 - 1 downto PIXEL_WIDTH * 6);
       rows(2) <= std_logic_vector(shift_left(unsigned(rows(2)), PIXEL_WIDTH * 2));  
-      rows(2)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 3 - 1 downto PIXEL_WIDTH * 2);
+      rows(2)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 6 - 1 downto PIXEL_WIDTH * 4);
       rows(3) <= std_logic_vector(shift_left(unsigned(rows(3)), PIXEL_WIDTH * 2));  
-      rows(3)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 2 - 1 downto PIXEL_WIDTH * 1);
+      rows(3)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 2);
       rows(4) <= std_logic_vector(shift_left(unsigned(rows(4)), PIXEL_WIDTH * 2));  
-      rows(4)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 1 - 1 downto PIXEL_WIDTH * 0);
+      rows(4)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 2 - 1 downto PIXEL_WIDTH * 0);
     end if;
   end process;
  
