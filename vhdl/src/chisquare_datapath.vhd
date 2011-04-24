@@ -28,12 +28,14 @@ architecture behavior of chisquare_datapath is
   signal sum : sum_t;
   signal sum_delay : std_logic_vector(integer(log2(real(histogram_length))) - 1 downto 0);
 begin
-  --sum(histogram_length - 1 downto 0)(15 downto 0) <= quotient(histogram_length - 1 downto 0)(15 downto 0);
+  
 
   process(clk, rst)
   begin
     if rst = '1' then
       statistic <= (others => '0');
+      done <= '0';
+      
     elsif rising_edge(clk) then
       -- Difference
       for i in histogram_length - 1 downto 0 loop
@@ -53,16 +55,24 @@ begin
       end loop;
       quotient_delay <= square_delay;
 
+      -- Connect the quotient outputs to the beginning of the sum registers.
+      for i in histogram_length - 1 downto 0 loop
+        --sum(i) <= quotient(i);
+        sum(i) <= std_logic_vector(to_unsigned(i,16));
+      end loop;
+
       -- Sum
-      for i in 0 to integer(log2(real(histogram_length))) loop
-        for j in 0 to integer(log2(real(histogram_length))) - i - 1 loop
-          sum(2 * histogram_length - 2 ** (integer(log2(real(histogram_length))) - i) + j) <= std_logic_vector(unsigned(sum(2 ** i + 2 * j - 1)) + unsigned(sum(2 ** i + 2 * j)));
+      for i in 0 to integer(log2(real(histogram_length))) - 1 loop
+        for j in 0 to integer(2 ** (integer(log2(real(histogram_length))) - i - 1)) - 1 loop
+          sum(2 * histogram_length - 2 ** (integer(log2(real(histogram_length))) - i) + j) <= std_logic_vector(unsigned(sum(2 ** i + 2 * j)) + unsigned(sum(2 ** i + 2 * j + 1)));
         end loop;
       end loop;
       sum_delay(0) <= quotient_delay;
       for i in 1 to integer(sum_delay'length) - 1 loop
         sum_delay(i) <= sum_delay(i - 1);
       end loop;
+      done <= sum_delay(sum_delay'length - 1);
+      statistic(15 downto 0) <= sum(sum'length - 1);
     end if;
   end process;
 end behavior;
