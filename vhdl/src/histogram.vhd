@@ -34,7 +34,7 @@ begin
     histogram  =>  histo
   );
 
-  CTRL : entity work.histogram_cotnroller port map (
+  CTRL : entity work.histogram_controller port map (
     clock      =>  clock,
     reset      =>  start,
     posx       =>  posx,

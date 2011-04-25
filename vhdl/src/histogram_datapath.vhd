@@ -24,7 +24,7 @@ architecture a of histogram_datapath is
   signal matrix   :  matrix_t;
 begin
 
-  BUFF : entity work.cell_buffer port map (
+  U_BUFFER : entity work.cell_buffer port map (
     clock  =>  clock,
     reset  =>  reset,
     load   =>  load,
@@ -33,7 +33,7 @@ begin
     q      =>  buffin
   ); 
 
-  LOAD : entity work.cell_loader port map (
+  U_LOADER : entity work.cell_loader port map (
     clock   =>  clock,
     reset   =>  reset,
     flush   =>  flush,
@@ -44,4 +44,4 @@ begin
     matrix  =>  matrix
   );
 
-end a;
+end  a;
