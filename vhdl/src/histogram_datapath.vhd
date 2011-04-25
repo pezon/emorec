@@ -9,40 +9,26 @@ entity histogram_datapath is
   port (
     clock     : in  std_logic  := '0';
     reset     : in  std_logic  := '0';
-    start     : in  std_logic  := '0'; 
+    posx      : in  natural range 0 to ROW_WIDTH - 1 := 0;
+    posy      : in  natural range 0 to ROW_WIDTH - 1 := 0;
+    load      : in  std_logic  := '0';
+    flush     : in  std_logic  := '0';
+    compare   : in  std_logic  := '0';
     data      : in  std_logic_vector(data_width - 1 downto 0)  := (others => '0');
     histogram : out histogram32_t);
 end histogram_datapath;
 
 architecture a of histogram_datapath is
-  signal flush    :  std_logic  := '0';
   signal buffin   :  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0)  := (others => '0');
   signal buffout  :  std_logic_vector(PIXEL_WIDTH * 2 - 1 downto 0)  := (others => '0');
   signal matrix   :  matrix_t;
-  signal position :  natural range 0 to ROW_WIDTH - 1 := 0; 
 begin
-
-  -- index position of cell on the image
-  process (clock, reset) 
-  begin
-    flush <= '0';
-    if reset = '1' then
-      position <= 0;
-    elsif clock = '1' and clock'event and start = '1' then
-      if position < ROW_WIDTH - 1 then
-        position <= position + 1;
-      else
-        position <= 0;
-        flush <= '1';
-      end if;
-    end if;
- end process;
 
   BUFF : entity work.cell_buffer port map (
     clock  =>  clock,
     reset  =>  reset,
-    load   =>  start,
-    addr   =>  position,
+    load   =>  load,
+    addr   =>  posx,
     data   =>  buffout,
     q      =>  buffin
   ); 
@@ -51,7 +37,7 @@ begin
     clock   =>  clock,
     reset   =>  reset,
     flush   =>  flush,
-    load    =>  start,
+    load    =>  load,
     data    =>  data,
     buffin  =>  buffin,
     buffout =>  buffout,
