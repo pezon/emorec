@@ -3,23 +3,27 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.emorec.all;
 
-entity histogram_datapath_tb is
-end histogram_datapath_tb;
+entity histogram_tb is
+end histogram_tb;
 
-architecture a of histogram_datapath_tb is
-  signal clock   : std_logic := '0';
-  signal reset   : std_logic := '0';
-  signal done    : std_logic := '0';
-  signal data    : std_logic_vector(63 downto 0);
+architecture a of histogram_tb is
+  signal clock    : std_logic := '0';
+  signal reset    : std_logic := '0';
+  signal start    : std_logic := '0';
+  signal done     : std_logic := '0';
+  signal sim_done : std_logic := '0';
+  signal data     : std_logic_vector(63 downto 0);
 begin
 
-  U_HIST_DP : entity work.histogram_datapath port map (
+  U_HIST : entity work.histogram port map (
     clock   =>   clock,
     reset   =>   reset,
-    data    =>   data
+    start   =>   start,
+    data    =>   data,
+    done    =>   done
   );
 
-  clock <= not clock after 5 ns when done = '0' else clock;
+  clock <= not clock after 5 ns when sim_done = '0' else clock;
 
   process 
   begin
@@ -29,7 +33,8 @@ begin
     reset <= '0';
     wait until clock'event and clock = '1';
     wait until clock'event and clock = '1';
-
+    
+    start <= '1';
     data <= x"0123456789abcdef";
     wait until clock'event and clock = '1';
 
@@ -57,7 +62,7 @@ begin
     data <= x"8888888888888888";
     wait until clock'event and clock = '1';
 
-    done <= '1';
+    sim_done <= '1';
   end process;
 
 end a;
