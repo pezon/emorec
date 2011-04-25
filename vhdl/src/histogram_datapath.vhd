@@ -28,13 +28,14 @@ begin
     if reset = '1' then
       position <= 0;
     elsif clock = '1' and clock'event then
-      position <= position + 1;
-      if position >= ROW_WIDTH then
+      if position < ROW_WIDTH - 1 then
+        position <= position + 1;
+      else
         position <= 0;
         flush <= '1';
       end if;
     end if;
-  end process;
+ end process;
 
   BUFF : entity work.cell_buffer port map (
     clock  =>  clock,
