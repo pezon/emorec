@@ -9,6 +9,7 @@ entity histogram_datapath is
   port (
     clock     : in  std_logic  := '0';
     reset     : in  std_logic  := '0';
+    start     : in  std_logic  := '0'; 
     data      : in  std_logic_vector(data_width - 1 downto 0)  := (others => '0');
     histogram : out histogram32_t);
 end histogram_datapath;
@@ -27,7 +28,7 @@ begin
     flush <= '0';
     if reset = '1' then
       position <= 0;
-    elsif clock = '1' and clock'event then
+    elsif clock = '1' and clock'event and start = '1' then
       if position < ROW_WIDTH - 1 then
         position <= position + 1;
       else
@@ -40,7 +41,7 @@ begin
   BUFF : entity work.cell_buffer port map (
     clock  =>  clock,
     reset  =>  reset,
-    load   =>  '1',
+    load   =>  start,
     addr   =>  position,
     data   =>  buffout,
     q      =>  buffin
@@ -50,7 +51,7 @@ begin
     clock   =>  clock,
     reset   =>  reset,
     flush   =>  flush,
-    load    =>  '1',
+    load    =>  start,
     data    =>  data,
     buffin  =>  buffin,
     buffout =>  buffout,
