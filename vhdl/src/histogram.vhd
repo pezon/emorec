@@ -27,7 +27,7 @@ begin
     reset      =>  reset,
     posx       =>  posx,
     posy       =>  posy,
-    load       =>  load,
+    load       =>  start,
     flush      =>  flush,
     compare    =>  compare,
     data       =>  data,
@@ -36,7 +36,8 @@ begin
 
   CTRL : entity work.histogram_controller port map (
     clock      =>  clock,
-    reset      =>  start,
+    reset      =>  reset, 
+    start      =>  start,
     posx       =>  posx,
     posy       =>  posy,
     load       =>  load,

@@ -27,8 +27,6 @@ begin
   begin
     if clock = '1' and clock'event then
 
-    if l0 +
-
       l0 := to_integer(unsigned(lbp0));
       h0 := to_integer(unsigned(hist(l0)));
       hist(l0) <= std_logic_vector(to_unsigned(h0 + 1, 32));

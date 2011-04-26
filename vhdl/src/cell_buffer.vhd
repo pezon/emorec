@@ -26,6 +26,6 @@ begin
     end if;
   end process; 
 
-  q <= memory(addr); 
+  q <= memory(ROW_WIDTH - 1) when addr = 0 else memory(addr - 1); 
 
 end a;
