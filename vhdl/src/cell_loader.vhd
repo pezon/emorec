@@ -32,12 +32,13 @@ end cell_loader;
 architecture a of cell_loader is 
   type rows_t is array(natural range 0 to CELL_HEIGHT - 1) of std_logic_vector(PIXEL_WIDTH * CELL_WIDTH - 1 downto 0);
   signal rows : rows_t;
+  signal edge : std_logic_vector(PIXEL_WIDTH * CELL_WIDTH - 1 downto 0);
 begin
 
   process (clock, reset)
   begin
     if reset = '1' then
-      rows(0) <= (others => '0');
+      edge <= (others => '0');
       rows(1) <= (others => '0');
       rows(2) <= (others => '0');
       rows(3) <= (others => '0');
@@ -47,15 +48,15 @@ begin
       if flush = '1' then 
         -- flush out existing data from registers,
         -- specifically when indexing a new row.
-        rows(0) <= (others => '0');
+        edge <= (others => '0');
         rows(1) <= (others => '0');
         rows(2) <= (others => '0');
         rows(3) <= (others => '0');
         rows(4) <= (others => '0');
       end if;
       -- data from buffer register
-      rows(0) <= std_logic_vector(shift_left(unsigned(rows(0)), PIXEL_WIDTH * 2));  
-      rows(0)(PIXEL_WIDTH * 2 - 1 downto 0) <= buffin(PIXEL_WIDTH * 2 - 1 downto 0);
+      edge <= std_logic_vector(shift_left(unsigned(edge), PIXEL_WIDTH * 2));  
+      edge(PIXEL_WIDTH * 2 - 1 downto 0) <= buffin(PIXEL_WIDTH * 2 - 1 downto 0);
       -- streaming data
       rows(1) <= std_logic_vector(shift_left(unsigned(rows(1)), PIXEL_WIDTH * 2));  
       rows(1)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 8 - 1 downto PIXEL_WIDTH * 6);
@@ -67,6 +68,9 @@ begin
       rows(4)(PIXEL_WIDTH * 2 - 1 downto 0) <= data(PIXEL_WIDTH * 2 - 1 downto PIXEL_WIDTH * 0);
     end if;
   end process;
+
+  row(0) <= edge(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 2) & buffin(PIXEL_WIDTH * 2 - 1 downto 0);
+  
  
   -- output scheme -- assemble row registers into an array
   --  00  01  02  03   
