@@ -40,6 +40,7 @@ begin
       position_x <= 0;
       position_y <= 0;
     elsif clock = '1' and clock'event and start = '1' then
+      flush   <= '0';
       load    <= '1';
       compare <= '0';
 
@@ -50,12 +51,14 @@ begin
       if position_y < ROW_WIDTH - 1 then
         if position_x < ROW_WIDTH - 1 then
           position_x <= position_x + 1;
+          flush <= '0';
         else
           flush <= '1';
           position_x <= 0;
           position_y <= position_y + 1;
         end if;
       else
+        flush   <= '0';
         load    <= '0';
         compare <= '0';
         done    <= '1';

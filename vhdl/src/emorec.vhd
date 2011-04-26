@@ -18,5 +18,6 @@ package emorec is
   constant ROW_WIDTH    : natural := 4; -- 128;  -- 4 for testing purposes only
 
   type matrix_t is array(CELL_HEIGHT * CELL_WIDTH - 1 downto 0) of std_logic_vector(PIXEL_WIDTH - 1 downto 0);
+  subtype lbp_t is std_logic_vector(7 downto 0);
 end emorec;
 
