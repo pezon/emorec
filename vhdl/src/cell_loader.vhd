@@ -69,7 +69,7 @@ begin
     end if;
   end process;
 
-  row(0) <= edge(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 2) & buffin(PIXEL_WIDTH * 2 - 1 downto 0);
+  rows(0) <= edge(PIXEL_WIDTH * 4 - 1 downto PIXEL_WIDTH * 2) & buffin(PIXEL_WIDTH * 2 - 1 downto 0);
   
  
   -- output scheme -- assemble row registers into an array
